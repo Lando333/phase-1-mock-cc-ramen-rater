@@ -8,26 +8,40 @@ const ramenComment = document.getElementById('comment-display')
 const ramenRating = document.getElementById('rating-display')
 const ramenForm = document.getElementById('new-ramen')
 
-document.addEventListener('DOMContentLoaded', 
+
+
+function fetchRamen() {
     fetch(ramenUrl)
-    .then(r => r.json())
-    .then(ramenData => ramenMenu(ramenData))
-)
+        .then(r => r.json())
+        .then(ramenData => renderAllRamen(ramenData))
+}
+fetchRamen()
 
-function ramenMenu(menu) {
-    for (let i = 0; i < menu.length; i++){
+function renderAllRamen( ramen ) {
+    ramen.forEach(element => renderIndividualRamen(element));
+}
 
-        let menuImg = document.createElement('img')
-        menuImg.src = menu[i].image
-        ramenMenuDiv.appendChild(menuImg)
+function renderIndividualRamen(ramen) {
+    let menuImg = document.createElement('img')
+    menuImg.src = ramen.image
+    ramenMenuDiv.appendChild(menuImg)
 
-        menuImg.addEventListener('click', () => {
-            const rated = menu[i].rating
-            ramenRating.innerText = rated
-            const comment = menu[i].comment
-            ramenComment.innerText = comment
-        })
-    }
+    menuImg.addEventListener('click', () => {
+        const mainImage = document.getElementById('main-img')
+        mainImage.src = ramen.image
+
+        const ramenName = document.getElementById('ramen-name')
+        ramenName.innerHTML = ramen.name
+
+        const detailRestaurant = document.getElementById('detail-restaurant')
+        detailRestaurant.innerHTML = ramen.restaurant
+        
+        const rated = ramen.rating
+        ramenRating.innerText = rated
+        
+        const comment = ramen.comment
+        ramenComment.innerText = comment
+    })
 }
 
 ramenForm.addEventListener('submit', (e) => {
@@ -35,12 +49,10 @@ ramenForm.addEventListener('submit', (e) => {
     let newRamen = {
         "name": e.target.name.value,
         "restaurant": e.target.restaurant.value,
-        "img": e.target.image.value,
-        "rate": e.target.rating.value,
+        "image": e.target.image.value,
+        "rating": e.target.rating.value,
         "comment": e.target.comment.value
     }
-
-    let newMenuImg = document.createElement('img')
-    newMenuImg.src = newRamen.img
-    ramenMenuDiv.appendChild(newMenuImg)
+    renderIndividualRamen(newRamen)
+    console.log(newRamen.rating)
 })
